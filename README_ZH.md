@@ -17,9 +17,20 @@
 
 ---
 
+> [!IMPORTANT]
+> **个人自用分支 —— 非官方，与上游无隶属关系。**
+> 本仓库仅用于承载我自己的本地改动。它与原版 [CC-Switch](https://github.com/farion1231/cc-switch) 作者及 [cc-switch-cli](https://github.com/saladday/cc-switch-cli) 维护者**没有任何隶属、授权、背书或合作关系**，其中的任何内容都不代表上游的立场。
+> 不提供任何支持、不保证可用性，也不对 issue / PR 作回应承诺。请自行承担使用风险。
+
+---
+
 ## 📖 关于本项目
 
-本项目是原版 [CC-Switch](https://github.com/farion1231/cc-switch) 的 **CLI 分支**。🔄 WebDAV 同步功能与上游项目完全兼容。
+本项目是 **个人自用分支**，基于 [CC-Switch CLI](https://github.com/saladday/cc-switch-cli)，而后者是原版 [CC-Switch](https://github.com/farion1231/cc-switch) 的 **CLI 分支**。
+
+它只用来承载我自己的本地修改：我**不是**上游项目的作者，与原作者 / 维护者（Jason Young、saladday 等）没有任何关系。原始版权声明与 MIT 许可证完整保留，见 [LICENSE](LICENSE)。
+
+🔄 WebDAV 同步功能与上游项目完全兼容。
 
 
 **更新日志：** [CHANGELOG.md](CHANGELOG.md)

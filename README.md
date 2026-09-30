@@ -19,9 +19,18 @@ English | [中文](README_ZH.md)
 
 ---
 
+> [!IMPORTANT]
+> **Personal, self-use fork — unofficial and unaffiliated.**
+> This repository is my own private playground for local changes. It is **not affiliated with, authorized by, endorsed by, or supported by** the original [CC-Switch](https://github.com/farion1231/cc-switch) author or the [cc-switch-cli](https://github.com/saladday/cc-switch-cli) maintainer. Nothing here represents their views or positions.
+> No support, no availability guarantees, and no commitment to respond to issues or pull requests. Use at your own risk.
+
+---
+
 ## 📖 About
 
-This project is a **CLI fork** of [CC-Switch](https://github.com/farion1231/cc-switch). 
+This repository is a **personal, self-use fork** of [CC-Switch CLI](https://github.com/saladday/cc-switch-cli), which is itself the **CLI fork** of [CC-Switch](https://github.com/farion1231/cc-switch).
+
+It exists only to carry my own local modifications. I am not the author of the upstream projects and have no relationship with them. All original copyright notices and the MIT license are retained — see [LICENSE](LICENSE).
 
 🔄 The WebDAV sync feature is fully compatible with the upstream project.
 
