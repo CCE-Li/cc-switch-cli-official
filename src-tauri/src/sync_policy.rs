@@ -26,6 +26,8 @@ pub(crate) fn should_sync_live(app_type: &AppType) -> bool {
         AppType::OpenClaw => get_openclaw_dir().exists(),
         // Pi live provider writes are owned by the revision-aware native service.
         AppType::Pi => false,
+        // Command Code is usage-only: cc-switch never writes its live config.
+        AppType::CommandCode => false,
     }
 }
 

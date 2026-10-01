@@ -108,11 +108,21 @@ impl NavItem {
         NavItem::Exit,
     ];
 
+    /// Command Code 只接入用量：不暴露供应商 / MCP / Skills / Prompts / 会话页面。
+    pub const COMMANDCODE_ALL: [NavItem; 5] = [
+        NavItem::Main,
+        NavItem::Usage,
+        NavItem::Config,
+        NavItem::Settings,
+        NavItem::Exit,
+    ];
+
     pub fn all_for_app(app_type: &AppType) -> &'static [NavItem] {
         match app_type {
             AppType::OpenClaw => &Self::OPENCLAW_ALL,
             AppType::Hermes => &Self::HERMES_ALL,
             AppType::Pi => &Self::PI_ALL,
+            AppType::CommandCode => &Self::COMMANDCODE_ALL,
             _ => &Self::ALL,
         }
     }

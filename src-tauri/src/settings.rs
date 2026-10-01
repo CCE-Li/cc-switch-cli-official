@@ -24,6 +24,8 @@ pub struct VisibleApps {
     pub openclaw: bool,
     #[serde(default = "default_visible_app_pi")]
     pub pi: bool,
+    #[serde(default = "default_visible_app_commandcode")]
+    pub commandcode: bool,
 }
 
 fn default_visible_app_claude() -> bool {
@@ -54,6 +56,10 @@ fn default_visible_app_pi() -> bool {
     true
 }
 
+fn default_visible_app_commandcode() -> bool {
+    true
+}
+
 pub fn default_visible_apps() -> VisibleApps {
     VisibleApps {
         claude: true,
@@ -63,6 +69,7 @@ pub fn default_visible_apps() -> VisibleApps {
         hermes: true,
         openclaw: true,
         pi: true,
+        commandcode: true,
     }
 }
 
@@ -130,6 +137,7 @@ impl VisibleApps {
             AppType::Hermes => self.hermes,
             AppType::OpenClaw => self.openclaw,
             AppType::Pi => self.pi,
+            AppType::CommandCode => self.commandcode,
         }
     }
 
@@ -142,6 +150,7 @@ impl VisibleApps {
             AppType::Hermes => self.hermes = enabled,
             AppType::OpenClaw => self.openclaw = enabled,
             AppType::Pi => self.pi = enabled,
+            AppType::CommandCode => self.commandcode = enabled,
         }
     }
 
@@ -162,7 +171,7 @@ impl VisibleApps {
     }
 }
 
-fn app_order() -> [AppType; 7] {
+fn app_order() -> [AppType; 8] {
     [
         AppType::Claude,
         AppType::Codex,
@@ -171,6 +180,7 @@ fn app_order() -> [AppType; 7] {
         AppType::Hermes,
         AppType::OpenClaw,
         AppType::Pi,
+        AppType::CommandCode,
     ]
 }
 
@@ -1142,6 +1152,7 @@ pub fn get_current_provider(app_type: &AppType) -> Option<String> {
         AppType::Hermes => settings.current_provider_hermes.clone(),
         AppType::OpenClaw => settings.current_provider_openclaw.clone(),
         AppType::Pi => None,
+        AppType::CommandCode => None,
     }
 }
 
@@ -1156,6 +1167,7 @@ pub fn set_current_provider(app_type: &AppType, id: Option<&str>) -> Result<(), 
         AppType::Hermes => settings.current_provider_hermes = id.map(|value| value.to_string()),
         AppType::OpenClaw => settings.current_provider_openclaw = id.map(|value| value.to_string()),
         AppType::Pi => {}
+        AppType::CommandCode => {}
     }
 
     update_settings(settings)

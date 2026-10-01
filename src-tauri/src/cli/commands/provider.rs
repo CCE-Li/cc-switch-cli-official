@@ -498,9 +498,12 @@ fn prompt_and_apply_provider_api_format(
     match app_type {
         AppType::Claude => prompt_and_apply_claude_api_format(app_type, provider),
         AppType::Codex => prompt_and_apply_codex_api_format(app_type, provider),
-        AppType::Gemini | AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => {
-            Ok(())
-        }
+        AppType::Gemini
+        | AppType::OpenCode
+        | AppType::Hermes
+        | AppType::OpenClaw
+        | AppType::Pi
+        | AppType::CommandCode => Ok(()),
     }
 }
 
@@ -1454,6 +1457,11 @@ fn build_add_settings_config(
             }
             Ok(settings)
         }
+        AppType::CommandCode => Err(AppError::localized(
+            "commandcode_unsupported",
+            "该功能不支持 Command Code",
+            "This feature does not support Command Code",
+        )),
         AppType::OpenCode | AppType::Hermes | AppType::OpenClaw => {
             let current = current.ok_or_else(|| add_additive_requires_config_error(app_type))?;
             let api_key = non_empty(args.api_key.clone());
@@ -1541,8 +1549,12 @@ fn apply_add_provider_api_format(
             };
             apply_codex_api_format(provider, format);
         }
-        AppType::Gemini | AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => {
-        }
+        AppType::Gemini
+        | AppType::OpenCode
+        | AppType::Hermes
+        | AppType::OpenClaw
+        | AppType::Pi
+        | AppType::CommandCode => {}
     }
     Ok(())
 }

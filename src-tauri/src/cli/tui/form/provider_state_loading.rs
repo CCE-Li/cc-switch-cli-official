@@ -29,6 +29,8 @@ pub(super) fn populate_form_from_provider(
         AppType::Hermes => populate_hermes_form(form, provider),
         AppType::OpenClaw => populate_openclaw_form(form, provider),
         AppType::Pi => populate_openclaw_form(form, provider),
+        // Command Code providers are not editable in cc-switch.
+        AppType::CommandCode => {}
     }
     form.is_full_url = form.supports_full_url_mode()
         && provider

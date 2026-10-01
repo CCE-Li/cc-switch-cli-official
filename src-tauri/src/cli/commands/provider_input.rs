@@ -144,7 +144,11 @@ pub fn common_snippet_has_effective_config(
             .ok()
             .and_then(|value| value.as_object().cloned())
             .is_some_and(|obj| !obj.is_empty()),
-        AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => false,
+        AppType::OpenCode
+        | AppType::Hermes
+        | AppType::OpenClaw
+        | AppType::Pi
+        | AppType::CommandCode => false,
     }
 }
 
@@ -209,7 +213,11 @@ pub fn provider_add_template_choices(app_type: &AppType) -> Vec<ProviderAddTempl
                 label: "Google OAuth",
             },
         ],
-        AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => {
+        AppType::OpenCode
+        | AppType::Hermes
+        | AppType::OpenClaw
+        | AppType::Pi
+        | AppType::CommandCode => {
             vec![ProviderAddTemplateChoice {
                 template: ProviderAddTemplate::Custom,
                 label: "Custom",
@@ -658,6 +666,7 @@ fn build_sponsor_template_settings_config(
             }
         }
         AppType::Pi => Err(unsupported_template_error(ProviderAddTemplate::Custom)),
+        AppType::CommandCode => Err(unsupported_template_error(ProviderAddTemplate::Custom)),
     }
 }
 
@@ -729,6 +738,11 @@ pub fn apply_additive_template_field_overrides(
             }
             Ok(updated)
         }
+        AppType::CommandCode => Err(AppError::localized(
+            "commandcode_unsupported",
+            "该功能不支持 Command Code",
+            "This feature does not support Command Code",
+        )),
         AppType::Claude | AppType::Codex | AppType::Gemini => Err(AppError::InvalidInput(format!(
             "{} does not use additive provider settings",
             app_type.as_str()
@@ -3924,6 +3938,11 @@ pub fn prompt_settings_config(
             }
             Ok(SettingsConfigPromptResult::new(config))
         }
+        AppType::CommandCode => Err(AppError::localized(
+            "commandcode_unsupported",
+            "该功能不支持 Command Code",
+            "This feature does not support Command Code",
+        )),
     }
 }
 
@@ -4659,6 +4678,29 @@ pub fn display_provider_summary(provider: &Provider, app_type: &AppType) {
             }
         }
         AppType::Pi => {
+            if provider.configured_api_key(app_type).is_some() {
+                println!(
+                    "  {}: {}",
+                    texts::api_key_display_label(),
+                    crate::t!("configured", "已配置")
+                );
+            }
+            if let Some(base_url) = provider
+                .settings_config
+                .get("baseUrl")
+                .and_then(Value::as_str)
+            {
+                println!("  {}: {}", texts::base_url_display_label(), base_url);
+            }
+            if let Some(models) = provider
+                .settings_config
+                .get("models")
+                .and_then(Value::as_array)
+            {
+                println!("  {}: {}", texts::model_label(), models.len());
+            }
+        }
+        AppType::CommandCode => {
             if provider.configured_api_key(app_type).is_some() {
                 println!(
                     "  {}: {}",

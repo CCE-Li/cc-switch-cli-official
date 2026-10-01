@@ -1627,7 +1627,8 @@ impl App {
                 Action::None
             }
             KeyCode::Down => {
-                *selected = (*selected + 1).min(6);
+                // 可见应用条目的下标与渲染列表保持一致（0..=7，末位是 Command Code）。
+                *selected = (*selected + 1).min(7);
                 Action::None
             }
             KeyCode::Char(' ') => {

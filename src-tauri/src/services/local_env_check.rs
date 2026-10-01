@@ -29,10 +29,11 @@ pub enum LocalTool {
     Hermes,
     OpenClaw,
     Pi,
+    CommandCode,
 }
 
 impl LocalTool {
-    pub const ALL: [LocalTool; 7] = [
+    pub const ALL: [LocalTool; 8] = [
         LocalTool::Claude,
         LocalTool::Codex,
         LocalTool::Gemini,
@@ -40,6 +41,7 @@ impl LocalTool {
         LocalTool::Hermes,
         LocalTool::OpenClaw,
         LocalTool::Pi,
+        LocalTool::CommandCode,
     ];
 
     pub fn all() -> &'static [LocalTool] {
@@ -55,6 +57,7 @@ impl LocalTool {
             LocalTool::Hermes => "Hermes",
             LocalTool::OpenClaw => "OpenClaw",
             LocalTool::Pi => "Pi",
+            LocalTool::CommandCode => "Command Code",
         }
     }
 
@@ -67,6 +70,8 @@ impl LocalTool {
             LocalTool::Hermes => "hermes",
             LocalTool::OpenClaw => "openclaw",
             LocalTool::Pi => "pi",
+            // 不要探测 "cmd"：Windows 上它会命中命令解释器 cmd.exe。
+            LocalTool::CommandCode => "command-code",
         }
     }
 
@@ -79,6 +84,7 @@ impl LocalTool {
             LocalTool::Hermes => &["--version", "version"],
             LocalTool::OpenClaw => &["--version", "version"],
             LocalTool::Pi => &["--version"],
+            LocalTool::CommandCode => &["--version", "version"],
         }
     }
 
@@ -106,6 +112,7 @@ impl LocalTool {
             AppType::Hermes => LocalTool::Hermes,
             AppType::OpenClaw => LocalTool::OpenClaw,
             AppType::Pi => LocalTool::Pi,
+            AppType::CommandCode => LocalTool::CommandCode,
         }
     }
 }
@@ -859,11 +866,22 @@ mod tests {
 
         assert_eq!(
             display_names,
-            vec!["Claude", "Codex", "Gemini", "OpenCode", "Hermes", "OpenClaw", "Pi"]
+            vec![
+                "Claude",
+                "Codex",
+                "Gemini",
+                "OpenCode",
+                "Hermes",
+                "OpenClaw",
+                "Pi",
+                "Command Code"
+            ]
         );
         assert_eq!(LocalTool::Hermes.binary_name(), "hermes");
         assert_eq!(LocalTool::OpenClaw.binary_name(), "openclaw");
         assert_eq!(LocalTool::Pi.binary_name(), "pi");
+        // 探测名刻意避开 "cmd"：Windows 上那会命中命令解释器 cmd.exe。
+        assert_eq!(LocalTool::CommandCode.binary_name(), "command-code");
         assert_eq!(LocalTool::Hermes.version_timeout(), Duration::from_secs(10));
         assert_eq!(LocalTool::Claude.version_timeout(), Duration::from_secs(5));
     }

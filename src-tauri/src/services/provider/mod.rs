@@ -1427,6 +1427,7 @@ impl ProviderService {
                 state.save()?;
             }
             AppType::Pi => {}
+            AppType::CommandCode => {}
         }
         Ok(())
     }
@@ -1482,7 +1483,11 @@ impl ProviderService {
                 strict_current_provider_id,
                 old_snippet,
             ),
-            AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => Ok(()),
+            AppType::OpenCode
+            | AppType::Hermes
+            | AppType::OpenClaw
+            | AppType::Pi
+            | AppType::CommandCode => Ok(()),
         };
 
         match result {
@@ -1612,7 +1617,11 @@ impl ProviderService {
             }
             AppType::Gemini => live_settings.get("env") != provider_settings.get("env"),
             AppType::Claude => live_settings != provider_settings,
-            AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => false,
+            AppType::OpenCode
+            | AppType::Hermes
+            | AppType::OpenClaw
+            | AppType::Pi
+            | AppType::CommandCode => false,
         }
     }
 
@@ -1771,6 +1780,7 @@ impl ProviderService {
             AppType::Hermes => Self::extract_opencode_common_config(settings_config),
             AppType::OpenClaw => Self::extract_openclaw_common_config(settings_config),
             AppType::Pi => Ok(String::new()),
+            AppType::CommandCode => Ok(String::new()),
         }
     }
 
@@ -2478,6 +2488,7 @@ impl ProviderService {
             AppType::Hermes => unreachable!("additive mode apps are handled earlier"),
             AppType::OpenClaw => unreachable!("additive mode apps are handled earlier"),
             AppType::Pi => unreachable!("Pi uses native provider import"),
+            AppType::CommandCode => unreachable!("additive mode apps are handled earlier"),
         };
 
         let mut provider = Provider::with_id(
@@ -2619,6 +2630,9 @@ impl ProviderService {
             }
             AppType::Pi => Err(AppError::InvalidInput(
                 "Pi providers are read from models.json".to_string(),
+            )),
+            AppType::CommandCode => Err(AppError::InvalidInput(
+                "Command Code has no live config".to_string(),
             )),
         }
     }
@@ -3036,6 +3050,7 @@ impl ProviderService {
             AppType::Hermes => unreachable!("additive mode handled above"),
             AppType::OpenClaw => unreachable!("additive mode handled above"),
             AppType::Pi => unreachable!("Pi switch is handled by the native provider service"),
+            AppType::CommandCode => unreachable!("additive mode handled above"),
         };
 
         Ok(PostCommitAction {
@@ -3255,6 +3270,7 @@ impl ProviderService {
                 Ok(PreparedLiveWrite::OpenClaw { models })
             }
             AppType::Pi => Ok(PreparedLiveWrite::Noop),
+            AppType::CommandCode => Ok(PreparedLiveWrite::Noop),
         }
     }
 
@@ -3496,6 +3512,9 @@ impl ProviderService {
             AppType::Pi => Err(AppError::Config(
                 "Pi does not support proxy takeover backups".into(),
             )),
+            AppType::CommandCode => Err(AppError::Config(
+                "Command Code does not support proxy takeover backups".into(),
+            )),
         }
     }
 
@@ -3593,6 +3612,7 @@ impl ProviderService {
             AppType::Pi => {
                 crate::pi_config::validate_provider_node(&provider.id, &provider.settings_config)?
             }
+            AppType::CommandCode => {}
         }
 
         // 🔧 验证并清理 UsageScript 配置（所有应用类型通用）
@@ -3752,6 +3772,8 @@ impl ProviderService {
                         crate::openclaw_config::remove_provider(provider_id)?;
                     }
                 }
+                // Command Code 在 cc-switch 里没有 live 配置可删。
+                AppType::CommandCode => {}
                 _ => unreachable!("non-additive apps should not enter additive delete branch"),
             }
 
@@ -3794,6 +3816,7 @@ impl ProviderService {
                 let _ = provider_snapshot;
             }
             AppType::Pi => unreachable!("Pi deletion is handled by the native provider service"),
+            AppType::CommandCode => unreachable!("additive mode apps are handled earlier"),
         }
 
         {

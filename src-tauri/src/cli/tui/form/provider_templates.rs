@@ -260,6 +260,7 @@ pub(super) fn provider_builtin_template_defs(app_type: &AppType) -> &'static [Pr
         AppType::Hermes => &PROVIDER_TEMPLATE_DEFS_HERMES,
         AppType::OpenClaw => &PROVIDER_TEMPLATE_DEFS_OPENCLAW,
         AppType::Pi => &PROVIDER_TEMPLATE_DEFS_OPENCLAW,
+        AppType::CommandCode => &[],
     }
 }
 
@@ -281,9 +282,12 @@ pub(super) fn provider_after_sponsor_template_defs(
     match app_type {
         AppType::Claude => &PROVIDER_TEMPLATE_DEFS_CLAUDE_AFTER_SPONSORS,
         AppType::Codex => &PROVIDER_TEMPLATE_DEFS_CODEX_AFTER_SPONSORS,
-        AppType::Gemini | AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => {
-            &[]
-        }
+        AppType::Gemini
+        | AppType::OpenCode
+        | AppType::Hermes
+        | AppType::OpenClaw
+        | AppType::Pi
+        | AppType::CommandCode => &[],
     }
 }
 
@@ -737,6 +741,8 @@ impl ProviderAddFormState {
         self.notes.set("");
 
         match self.app_type {
+            // Command Code has no provider presets in cc-switch.
+            AppType::CommandCode => {}
             AppType::Claude => {
                 self.reset_claude_template_state();
                 self.claude_api_key_field = preset.claude_api_key_field;

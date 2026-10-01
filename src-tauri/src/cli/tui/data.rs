@@ -409,6 +409,7 @@ impl ProxySnapshot {
             AppType::Hermes => None,
             AppType::OpenClaw => None,
             AppType::Pi => None,
+            AppType::CommandCode => None,
         }
     }
 
@@ -1742,6 +1743,9 @@ fn extract_api_url(settings_config: &Value, app_type: &AppType) -> Option<String
             .as_str()
             .map(|s| s.to_string()),
         AppType::Pi => crate::pi_config::provider_base_url(settings_config).ok(),
+        // Command Code is usage-only: cc-switch stores no base URL for its
+        // (unmanaged) providers.
+        AppType::CommandCode => None,
     }
 }
 
@@ -3513,6 +3517,7 @@ fn usage_provider_name_sql(log_alias: &str, provider_alias: &str) -> String {
          WHEN '_codex_session' THEN 'Codex (Session)' \
          WHEN '_gemini_session' THEN 'Gemini (Session)' \
          WHEN '_opencode_session' THEN 'OpenCode (Session)' \
+         WHEN '_commandcode_session' THEN 'Command Code (Session)' \
          ELSE {log_alias}.provider_id END)"
     )
 }

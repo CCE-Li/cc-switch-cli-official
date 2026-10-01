@@ -22,6 +22,11 @@ impl StreamCheckService {
             AppType::Hermes => Self::extract_hermes_base_url(provider),
             AppType::OpenClaw => Self::extract_openclaw_base_url(provider),
             AppType::Pi => crate::pi_config::provider_base_url(&provider.settings_config),
+            AppType::CommandCode => Err(AppError::localized(
+                "commandcode_unsupported",
+                "该功能不支持 Command Code",
+                "This feature does not support Command Code",
+            )),
             AppType::Claude | AppType::Codex | AppType::Gemini => get_adapter(app_type)
                 .expect("proxy-capable app must have an adapter")
                 .extract_base_url(provider)

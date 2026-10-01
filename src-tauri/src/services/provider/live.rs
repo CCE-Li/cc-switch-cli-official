@@ -177,6 +177,11 @@ pub(super) fn capture_live_snapshot(app_type: &AppType) -> Result<LiveSnapshot, 
         AppType::Pi => Err(AppError::Config(
             "Pi providers use the Pi provider service".to_string(),
         )),
+        AppType::CommandCode => Err(AppError::localized(
+            "commandcode_unsupported",
+            "该功能不支持 Command Code",
+            "This feature does not support Command Code",
+        )),
     }
 }
 

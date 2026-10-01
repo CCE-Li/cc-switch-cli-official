@@ -179,6 +179,13 @@ fn ensure_common_config_mutation_supported(app_type: &AppType) -> Result<(), App
             "Pi does not support common config snippets".to_string(),
         ));
     }
+    // Command Code is usage-only: its common-config mutations would be silent
+    // no-ops (CommonConfigSnippets returns None/no-op for it), so fail loudly.
+    if matches!(app_type, AppType::CommandCode) {
+        return Err(AppError::InvalidInput(
+            "Command Code does not support common config snippets".to_string(),
+        ));
+    }
     Ok(())
 }
 
@@ -194,7 +201,8 @@ fn canonical_common_snippet(app_type: AppType, raw: &str) -> Result<Option<Strin
         | AppType::OpenCode
         | AppType::Hermes
         | AppType::OpenClaw
-        | AppType::Pi => {
+        | AppType::Pi
+        | AppType::CommandCode => {
             let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| {
                 AppError::InvalidInput(texts::tui_toast_invalid_json(&e.to_string()))
             })?;

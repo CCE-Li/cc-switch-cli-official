@@ -588,8 +588,11 @@ fn sync_usage_for_provider(
         AppType::Gemini => crate::services::session_usage_gemini::sync_gemini_usage(db),
         AppType::OpenCode => crate::services::session_usage_opencode::sync_opencode_usage(db),
         AppType::Pi => crate::services::session_usage_pi::sync_pi_usage(db),
+        AppType::CommandCode => {
+            crate::services::session_usage_commandcode::sync_commandcode_usage(db)
+        }
         other => Err(AppError::InvalidInput(format!(
-            "session usage sync is only supported for claude, codex, gemini, opencode, and pi; got {}",
+            "session usage sync is only supported for claude, codex, gemini, opencode, pi, and commandcode; got {}",
             other.as_str()
         ))),
     }

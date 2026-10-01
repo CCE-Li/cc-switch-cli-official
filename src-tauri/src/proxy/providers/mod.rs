@@ -146,9 +146,11 @@ impl ProviderType {
                 }
                 ProviderType::Gemini
             }
-            AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => {
-                ProviderType::Codex
-            }
+            AppType::OpenCode
+            | AppType::Hermes
+            | AppType::OpenClaw
+            | AppType::Pi
+            | AppType::CommandCode => ProviderType::Codex,
         }
     }
 
@@ -201,6 +203,9 @@ pub fn get_adapter(app_type: &AppType) -> Option<Box<dyn ProviderAdapter>> {
         AppType::Hermes => Box::new(CodexAdapter::new()),
         AppType::OpenClaw => Box::new(CodexAdapter::new()),
         AppType::Pi => return None,
+        // Command Code has no proxy route in cc-switch: usage comes from its
+        // local session logs instead.
+        AppType::CommandCode => return None,
     })
 }
 

@@ -482,6 +482,14 @@ impl ProviderService {
                 .and_then(Value::as_str)
                 .ok_or_else(|| AppError::InvalidInput("Pi provider API key is missing".to_string()))
                 .map(str::to_string),
+            AppType::CommandCode => provider
+                .settings_config
+                .get("apiKey")
+                .and_then(Value::as_str)
+                .ok_or_else(|| {
+                    AppError::InvalidInput("Command Code provider API key is missing".to_string())
+                })
+                .map(str::to_string),
         }
     }
 
@@ -563,6 +571,11 @@ impl ProviderService {
                 .unwrap_or_default()
                 .to_string()),
             AppType::Pi => crate::pi_config::provider_base_url(&provider.settings_config),
+            AppType::CommandCode => Err(AppError::localized(
+                "commandcode_unsupported",
+                "该功能不支持 Command Code",
+                "This feature does not support Command Code",
+            )),
         }
     }
 

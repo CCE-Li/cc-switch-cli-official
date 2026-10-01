@@ -971,6 +971,7 @@ mod tests {
                 hermes: false,
                 openclaw: false,
                 pi: false,
+                commandcode: false,
             },
         };
 
@@ -982,6 +983,44 @@ mod tests {
             &app.overlay,
             Overlay::VisibleAppsPicker { selected, apps }
                 if *selected == 6 && apps.pi
+        ));
+    }
+
+    #[test]
+    #[serial(home_settings)]
+    fn visible_apps_picker_can_reach_and_toggle_command_code() {
+        let temp_home = TempDir::new().expect("create temp home");
+        let _env = TestEnvGuard::isolated(temp_home.path());
+        crate::settings::set_visible_apps_mode(crate::settings::VisibleAppsMode::Manual)
+            .expect("save visible apps mode");
+        let mut app = App::new(Some(AppType::Pi));
+        app.overlay = Overlay::VisibleAppsPicker {
+            selected: app_type_picker_index(&AppType::Pi),
+            apps: crate::settings::VisibleApps {
+                claude: true,
+                codex: false,
+                gemini: false,
+                opencode: false,
+                hermes: false,
+                openclaw: false,
+                pi: false,
+                commandcode: false,
+            },
+        };
+
+        // 末位（Command Code）必须能被方向键选中，否则设置页里根本切不到它。
+        assert!(matches!(
+            app.on_key(key(KeyCode::Down), &UiData::default()),
+            Action::None
+        ));
+        assert!(matches!(
+            app.on_key(key(KeyCode::Char(' ')), &UiData::default()),
+            Action::None
+        ));
+        assert!(matches!(
+            &app.overlay,
+            Overlay::VisibleAppsPicker { selected, apps }
+                if *selected == 7 && apps.commandcode
         ));
     }
 
@@ -1166,6 +1205,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
         let mut app = App::new(Some(AppType::Claude));
@@ -1192,6 +1232,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
         let mut app = App::new(Some(AppType::Claude));
@@ -1226,6 +1267,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
         let mut app = App::new(Some(AppType::Gemini));
@@ -1268,6 +1310,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
 
@@ -1292,6 +1335,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
 
@@ -1320,6 +1364,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
 
@@ -1344,6 +1389,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
 
@@ -6143,6 +6189,7 @@ mod tests {
         );
     }
 
+    #[cfg(unix)]
     #[test]
     #[serial(home_settings)]
     fn openclaw_workspace_open_failure_is_localized() {
@@ -6266,6 +6313,7 @@ mod tests {
         assert_eq!(editor.text(), "late content");
     }
 
+    #[cfg(unix)]
     #[test]
     #[serial(home_settings)]
     fn openclaw_daily_memory_save_failure_is_localized() {
@@ -11226,6 +11274,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
         crate::settings::set_visible_apps_mode(crate::settings::VisibleAppsMode::Manual)
@@ -11277,6 +11326,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         })
         .expect("save visible apps");
 
@@ -11315,6 +11365,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         };
         settings.visible_apps_settings.mode = crate::settings::VisibleAppsMode::Auto;
         settings.visible_apps_settings.auto_prompt_decided = true;
@@ -11354,6 +11405,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         };
         settings.visible_apps_settings.mode = crate::settings::VisibleAppsMode::Auto;
         settings.visible_apps_settings.auto_prompt_decided = true;
@@ -11392,6 +11444,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         };
         let mut settings = crate::settings::get_settings();
         settings.visible_apps = initial.clone();

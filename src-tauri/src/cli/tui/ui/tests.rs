@@ -4654,6 +4654,7 @@ fn header_only_renders_selected_visible_apps() {
         hermes: false,
         openclaw: true,
         pi: false,
+        commandcode: false,
     })
     .expect("save visible apps");
 
@@ -4684,6 +4685,7 @@ fn header_keeps_all_app_tabs_visible_with_proxy_chip() {
         hermes: false,
         openclaw: true,
         pi: false,
+        commandcode: false,
     })
     .expect("save visible apps");
 
@@ -4714,6 +4716,7 @@ fn settings_page_shows_visible_apps_row_value() {
         hermes: false,
         openclaw: true,
         pi: false,
+        commandcode: false,
     })
     .expect("save visible apps");
 
@@ -5388,6 +5391,7 @@ fn zero_selection_warning_toast_renders_after_picker_rejection() {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         },
     };
     app.push_toast(
@@ -5428,6 +5432,7 @@ fn visible_apps_picker_uses_space_toggle_key() {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         },
     };
 
@@ -5460,6 +5465,7 @@ fn visible_apps_picker_auto_mode_does_not_append_auto_suffix_to_apps() {
             hermes: true,
             openclaw: true,
             pi: false,
+            commandcode: false,
         },
     };
 
@@ -5618,6 +5624,7 @@ fn header_centers_tabs_when_room_allows() {
         hermes: true,
         openclaw: true,
         pi: false,
+        commandcode: false,
     })
     .expect("save visible apps");
 
@@ -5664,6 +5671,7 @@ fn header_keeps_title_and_right_badges_visible_without_large_gap_in_chinese() {
         hermes: true,
         openclaw: true,
         pi: false,
+        commandcode: false,
     })
     .expect("save visible apps");
 

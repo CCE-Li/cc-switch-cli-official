@@ -375,7 +375,11 @@ impl ProviderAddFormState {
                 .ok()
                 .and_then(|value| value.as_object().cloned())
                 .is_some_and(|env| !env.is_empty()),
-            AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => false,
+            AppType::OpenCode
+            | AppType::Hermes
+            | AppType::OpenClaw
+            | AppType::Pi
+            | AppType::CommandCode => false,
         }
     }
 
@@ -431,7 +435,11 @@ impl ProviderAddFormState {
                     app_type, settings, &snippet,
                 )
             }
-            AppType::OpenCode | AppType::Hermes | AppType::OpenClaw | AppType::Pi => false,
+            AppType::OpenCode
+            | AppType::Hermes
+            | AppType::OpenClaw
+            | AppType::Pi
+            | AppType::CommandCode => false,
         }
     }
 
@@ -579,6 +587,8 @@ impl ProviderAddFormState {
                 fields.push(ProviderAddField::OpenCodeBaseUrl);
                 fields.push(ProviderAddField::OpenClawModels);
             }
+            // Command Code is usage-only: cc-switch does not manage its providers.
+            AppType::CommandCode => {}
         }
 
         if Self::supports_common_config(&self.app_type) {
@@ -1193,7 +1203,8 @@ impl ProviderAddFormState {
             | AppType::OpenCode
             | AppType::Hermes
             | AppType::OpenClaw
-            | AppType::Pi => {}
+            | AppType::Pi
+            | AppType::CommandCode => {}
         }
         Ok(())
     }
@@ -1425,7 +1436,8 @@ impl ProviderAddFormState {
             | AppType::OpenCode
             | AppType::Hermes
             | AppType::OpenClaw
-            | AppType::Pi => false,
+            | AppType::Pi
+            | AppType::CommandCode => false,
         }
     }
 
@@ -2237,6 +2249,8 @@ impl ProviderAddFormState {
                 let provider = self.to_provider_json_value();
                 crate::pi_config::provider_base_url(&provider["settingsConfig"]).unwrap_or_default()
             }
+            // Command Code providers are not managed by cc-switch.
+            AppType::CommandCode => String::new(),
         }
     }
 
@@ -2265,6 +2279,9 @@ impl ProviderAddFormState {
                 (&self.opencode_api_key.value, &self.opencode_base_url.value)
             }
             AppType::Pi => unreachable!("Pi credentials are resolved above"),
+            // Command Code providers are not managed by cc-switch, so no
+            // provider form ever reaches this lookup.
+            AppType::CommandCode => (&self.opencode_api_key.value, &self.opencode_base_url.value),
         };
         (
             Self::usage_query_comment_value(api_key),
@@ -2518,7 +2535,8 @@ impl ProviderAddFormState {
             | AppType::OpenCode
             | AppType::Hermes
             | AppType::OpenClaw
-            | AppType::Pi => false,
+            | AppType::Pi
+            | AppType::CommandCode => false,
         }
     }
 

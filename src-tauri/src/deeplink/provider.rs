@@ -147,6 +147,13 @@ fn build_provider_from_request(
                 "Pi providers must be added from the Pi provider page".to_string(),
             ));
         }
+        AppType::CommandCode => {
+            return Err(AppError::localized(
+                "commandcode_unsupported",
+                "该功能不支持 Command Code",
+                "This feature does not support Command Code",
+            ));
+        }
     };
 
     let meta = build_provider_meta(request)?;

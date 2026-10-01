@@ -394,6 +394,11 @@ pub(crate) fn sync_all_session_usage_unlocked(
         "Pi",
         crate::services::session_usage_pi::sync_pi_usage(db),
     );
+    merge_sync_step(
+        &mut result,
+        "CommandCode",
+        crate::services::session_usage_commandcode::sync_commandcode_usage(db),
+    );
     if result.imported > 0 {
         crate::usage_events::notify_log_recorded();
     }
@@ -1401,7 +1406,7 @@ pub(crate) fn delete_session_logs_covered_by_proxy_log(
 
     conn.execute(
         "DELETE FROM proxy_request_logs
-         WHERE COALESCE(data_source, 'proxy') IN ('session_log', 'codex_session', 'gemini_session', 'opencode_session')
+         WHERE COALESCE(data_source, 'proxy') IN ('session_log', 'codex_session', 'gemini_session', 'opencode_session', 'commandcode_session')
            AND app_type = ?1
            AND status_code >= 200
            AND status_code < 300
@@ -1412,7 +1417,7 @@ pub(crate) fn delete_session_logs_covered_by_proxy_log(
                cache_creation_tokens = ?6
                OR (
                    cache_creation_tokens = 0
-                   AND COALESCE(data_source, 'proxy') IN ('codex_session', 'gemini_session', 'opencode_session')
+                   AND COALESCE(data_source, 'proxy') IN ('codex_session', 'gemini_session', 'opencode_session', 'commandcode_session')
                )
            )
            AND created_at BETWEEN ?7 - ?8 AND ?7 + ?8

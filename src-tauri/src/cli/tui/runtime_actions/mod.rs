@@ -93,6 +93,21 @@ fn normalize_route_for_app(app_type: &AppType, route: &super::route::Route) -> s
             | super::route::Route::SettingsManagedAccounts => route.clone(),
             _ => super::route::Route::Main,
         },
+        // Command Code 只有 Main / Usage / Config / Settings 页面：其余路由回落，
+        // 免得切到它以后仍停在上一个应用的 Skills / MCP 等页面上。
+        AppType::CommandCode => match route {
+            super::route::Route::Main
+            | super::route::Route::Usage
+            | super::route::Route::UsageLogs
+            | super::route::Route::UsageLogDetail { .. }
+            | super::route::Route::Pricing
+            | super::route::Route::Config
+            | super::route::Route::Settings
+            | super::route::Route::SettingsProxy
+            | super::route::Route::SettingsOutboundProxy
+            | super::route::Route::SettingsManagedAccounts => route.clone(),
+            _ => super::route::Route::Main,
+        },
         _ => match route {
             super::route::Route::ConfigOpenClawWorkspace
             | super::route::Route::ConfigOpenClawDailyMemory
@@ -1184,6 +1199,41 @@ mod tests {
     use std::path::Path;
     use tempfile::TempDir;
 
+    /// Command Code 只有 Main / Usage / Config / Settings，其它路由必须回落。
+    #[test]
+    fn command_code_routes_fall_back_to_its_own_pages() {
+        for route in [
+            Route::Providers,
+            Route::Skills,
+            Route::SkillsDiscover,
+            Route::Mcp,
+            Route::Prompts,
+            Route::Sessions,
+            Route::HermesMemory,
+            Route::PiSystemPrompts,
+        ] {
+            assert_eq!(
+                normalize_route_for_app(&AppType::CommandCode, &route),
+                Route::Main,
+                "route {route:?} must fall back to Main"
+            );
+        }
+        for route in [
+            Route::Main,
+            Route::Usage,
+            Route::UsageLogs,
+            Route::Pricing,
+            Route::Config,
+            Route::Settings,
+        ] {
+            assert_eq!(
+                normalize_route_for_app(&AppType::CommandCode, &route),
+                route.clone(),
+                "route {route:?} must be kept"
+            );
+        }
+    }
+
     struct EnvGuard {
         _lock: TestHomeSettingsLock,
         old_home: Option<OsString>,
@@ -1868,6 +1918,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         })
         .expect("save initial visible apps");
 
@@ -1879,6 +1930,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         };
         let mut app = App::new(Some(AppType::OpenClaw));
         app.route = Route::ConfigOpenClawTools;
@@ -1940,6 +1992,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         };
         crate::settings::set_visible_apps(initial_visible_apps.clone())
             .expect("save initial visible apps");
@@ -1963,6 +2016,7 @@ mod tests {
                     hermes: false,
                     openclaw: false,
                     pi: false,
+                    commandcode: false,
                 },
             },
         )
@@ -1992,6 +2046,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         })
         .expect("save initial visible apps");
         write_invalid_legacy_config(temp_home.path());
@@ -2004,6 +2059,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         };
         let mut app = App::new(Some(AppType::Claude));
         let mut data = UiData::default();
@@ -2042,6 +2098,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         };
         crate::settings::set_visible_apps(initial_visible_apps.clone())
             .expect("save initial visible apps");
@@ -2062,6 +2119,7 @@ mod tests {
                     hermes: false,
                     openclaw: false,
                     pi: false,
+                    commandcode: false,
                 },
             },
         )
@@ -2092,6 +2150,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         };
         settings.visible_apps_settings.mode = crate::settings::VisibleAppsMode::Auto;
         settings.visible_apps_settings.auto_prompt_decided = true;
@@ -2105,6 +2164,7 @@ mod tests {
             hermes: false,
             openclaw: false,
             pi: false,
+            commandcode: false,
         };
         let mut app = App::new(Some(AppType::Claude));
         let mut data = UiData::default();
@@ -2152,6 +2212,7 @@ mod tests {
             hermes: false,
             openclaw: true,
             pi: false,
+            commandcode: false,
         };
         let mut settings = crate::settings::get_settings();
         settings.visible_apps = initial_visible_apps.clone();
@@ -2179,6 +2240,7 @@ mod tests {
                     hermes: false,
                     openclaw: false,
                     pi: false,
+                    commandcode: false,
                 },
                 selected: 5,
             },
